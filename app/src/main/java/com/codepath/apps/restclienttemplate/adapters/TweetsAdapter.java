@@ -1,8 +1,8 @@
 package com.codepath.apps.restclienttemplate.adapters;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,8 +15,6 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.codepath.apps.restclienttemplate.R;
 import com.codepath.apps.restclienttemplate.models.Tweet;
-
-import org.w3c.dom.Text;
 
 import java.util.List;
 
@@ -46,7 +44,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         Tweet tweet = list.get(i);
         viewHolder.tvUsername.setText(tweet.getUser().getUsername());
         viewHolder.tvName.setText(tweet.getUser().getName());
-        //viewHolder.tvCreateAt.setText(tweet.getCreateAt());
+        viewHolder.tvCreateAt.setText(tweet.getCreateAt());
         viewHolder.tvBody.setText(tweet.getBody());
         Glide.with(context)
                 .load(tweet.getUser().getImgPath())
@@ -54,12 +52,25 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
                 .error(R.drawable.placeholder)
                 .apply(new RequestOptions().centerInside().transform(new RoundedCorners(30)))
                 .into(viewHolder.ivProfileImg);
-        Log.d("img",tweet.getUser().getImgPath());
     }
 
     @Override
     public int getItemCount() {
         return list.size();
+    }
+    public void clear() {
+
+        list.clear();
+        notifyDataSetChanged();
+
+    }
+
+    // Add a list of items -- change to type used
+    public void addAllTweets(List<Tweet> tweetList) {
+
+        list.addAll(tweetList);
+        notifyDataSetChanged();
+
     }
 
     //define viewholder

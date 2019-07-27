@@ -1,5 +1,7 @@
 package com.codepath.apps.restclienttemplate.models;
 
+import com.codepath.apps.restclienttemplate.TimeFormatter;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -14,7 +16,7 @@ public class Tweet {
     }
 
     public String getCreateAt() {
-        return createAt;
+        return "•"+TimeFormatter.getTimeDifference(createAt);
     }
 
     public long gettId() {

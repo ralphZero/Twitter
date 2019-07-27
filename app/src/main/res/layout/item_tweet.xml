@@ -10,30 +10,38 @@
         android:id="@+id/ivProfileImg"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_marginRight="10dp"
+        android:layout_marginEnd="10dp"
+        android:contentDescription="@string/imgprofil"
         tools:srcCompat="@tools:sample/avatars[2]" />
 
     <TextView
         android:id="@+id/tvScreenName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="5dp"
-        android:layout_toRightOf="@id/ivProfileImg"
+        android:layout_marginEnd="5dp"
+        android:layout_toEndOf="@id/ivProfileImg"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@android:color/black"
+        android:textStyle="bold"
         tools:text="Ghaly Nicolas" />
 
     <TextView
         android:id="@+id/tvScreenUsername"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="5dp"
-        android:layout_toRightOf="@id/tvScreenName"
+        android:layout_marginEnd="5dp"
+        android:layout_toEndOf="@id/tvScreenName"
+        android:maxLines="1"
         tools:text="\@Ghalynho10" />
 
     <TextView
         android:id="@+id/tvCreateAt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/tvScreenUsername"
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@id/tvScreenUsername"
+        android:maxLines="1"
         tools:text="•10h" />
 
     <TextView
@@ -41,6 +49,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/tvScreenName"
-        android:layout_toRightOf="@id/ivProfileImg"
-        android:text="TextView" />
+        android:layout_toEndOf="@id/ivProfileImg"
+        android:textColor="@android:color/black"
+        tools:text="tweet here" />
 </RelativeLayout>

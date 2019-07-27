@@ -1,10 +1,11 @@
 package com.codepath.apps.restclienttemplate;
 
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 
 import com.codepath.apps.restclienttemplate.adapters.TweetsAdapter;
@@ -33,10 +34,16 @@ public class TimelineActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         client = TwitterApplication.getRestClient(this);
 
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
+        refreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
 
         rvTweet = (RecyclerView) findViewById(R.id.rvTweet);
         list = new ArrayList<>();
@@ -45,23 +52,38 @@ public class TimelineActivity extends AppCompatActivity {
         rvTweet.setAdapter(adapter);
 
         populateHomeTimeline();
+
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                populateHomeTimeline();
+
+            }
+        });
     }
 
     private void populateHomeTimeline() {
         client.getHomeTimeline(new JsonHttpResponseHandler(){
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                Log.d("TwitterClient",response.toString());
+                //Log.d("TwitterClient",response.toString());
+                List<Tweet> tweetsToAdd = new ArrayList<>();
                 for (int i=0;i < response.length();i++){
                     try {
                         JSONObject jsonObject = response.getJSONObject(i);
                         Tweet tweet = Tweet.fromJson(jsonObject);
-                        list.add(tweet);
-                        adapter.notifyItemInserted(list.size()-1);
+                        //add tweet to data source
+                        tweetsToAdd.add(tweet);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
+                //clear existing data
+                adapter.clear();
+                //show the data we just received
+                adapter.addAllTweets(tweetsToAdd);
+                //stop refreshing
+                refreshLayout.setRefreshing(false);
             }
 
             @Override
