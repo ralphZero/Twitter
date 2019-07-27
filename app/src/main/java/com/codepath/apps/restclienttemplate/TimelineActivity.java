@@ -1,5 +1,6 @@
 package com.codepath.apps.restclienttemplate;
 
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -24,6 +25,9 @@ public class TimelineActivity extends AppCompatActivity {
     RecyclerView rvTweet;
     List<Tweet> list;
     TweetsAdapter adapter;
+
+    SwipeRefreshLayout refreshLayout;
+
     private TwitterClient client;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +35,8 @@ public class TimelineActivity extends AppCompatActivity {
         setContentView(R.layout.activity_timeline);
 
         client = TwitterApplication.getRestClient(this);
+
+        refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
 
         rvTweet = (RecyclerView) findViewById(R.id.rvTweet);
         list = new ArrayList<>();
@@ -45,7 +51,7 @@ public class TimelineActivity extends AppCompatActivity {
         client.getHomeTimeline(new JsonHttpResponseHandler(){
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                //Log.d("TwitterClient",response.toString());
+                Log.d("TwitterClient",response.toString());
                 for (int i=0;i < response.length();i++){
                     try {
                         JSONObject jsonObject = response.getJSONObject(i);

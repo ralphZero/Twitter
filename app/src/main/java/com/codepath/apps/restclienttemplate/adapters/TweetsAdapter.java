@@ -3,6 +3,7 @@ package com.codepath.apps.restclienttemplate.adapters;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestOptions;
 import com.codepath.apps.restclienttemplate.R;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 
@@ -37,13 +40,21 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         return viewHolder;
     }
 
+    //bind
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
         Tweet tweet = list.get(i);
         viewHolder.tvUsername.setText(tweet.getUser().getUsername());
         viewHolder.tvName.setText(tweet.getUser().getName());
+        //viewHolder.tvCreateAt.setText(tweet.getCreateAt());
         viewHolder.tvBody.setText(tweet.getBody());
-        Glide.with(context).load(tweet.getUser().getImgPath()).into(viewHolder.ivProfileImg);
+        Glide.with(context)
+                .load(tweet.getUser().getImgPath())
+                .placeholder(R.drawable.placeholder)
+                .error(R.drawable.placeholder)
+                .apply(new RequestOptions().centerInside().transform(new RoundedCorners(30)))
+                .into(viewHolder.ivProfileImg);
+        Log.d("img",tweet.getUser().getImgPath());
     }
 
     @Override
