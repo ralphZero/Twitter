@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".DetailedView">
+
+    <include
+        android:id="@+id/inc_toolbar1"
+        layout="@layout/m_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/inc_toolbar1">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp">
+
+            <TextView
+                android:id="@+id/tvDetUsername"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvDetName"
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@id/ivDetProfileImg"
+                android:ellipsize="end"
+                android:maxLines="1"
+                tools:text="TextView" />
+
+            <TextView
+                android:id="@+id/tvDetBody"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/ivDetProfileImg"
+                android:layout_marginTop="10dp"
+                android:textColor="@color/TwitterBlack"
+                android:textSize="24sp"
+                tools:text="TextView" />
+
+            <TextView
+                android:id="@+id/tvDetName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@id/ivDetProfileImg"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="@color/TwitterBlack"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                tools:text="TextView" />
+
+            <ImageView
+                android:id="@+id/ivDetProfileImg"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                tools:srcCompat="@tools:sample/avatars[0]" />
+
+            <ImageView
+                android:id="@+id/ivImg"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_below="@id/tvDetBody"
+                android:scaleType="centerInside"
+                tools:srcCompat="@tools:sample/backgrounds/scenic[19]" />
+        </RelativeLayout>
+    </ScrollView>
+
+
+</RelativeLayout>

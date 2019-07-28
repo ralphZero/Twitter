@@ -28,6 +28,8 @@ public class TimelineActivity extends AppCompatActivity {
     TweetsAdapter adapter;
 
     SwipeRefreshLayout refreshLayout;
+    EndlessRecyclerViewScrollListener scrollListener;
+    private long lowestId;
 
     private TwitterClient client;
     @Override
@@ -48,7 +50,16 @@ public class TimelineActivity extends AppCompatActivity {
         rvTweet = (RecyclerView) findViewById(R.id.rvTweet);
         list = new ArrayList<>();
         adapter = new TweetsAdapter(this,list);
-        rvTweet.setLayoutManager(new LinearLayoutManager(this,RecyclerView.VERTICAL,false));
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        rvTweet.setLayoutManager(layoutManager);
+        scrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                loadNextDataFromApi(lowestId);
+            }
+        };
+        rvTweet.setOnScrollListener(scrollListener);
         rvTweet.setAdapter(adapter);
 
         populateHomeTimeline();
@@ -57,20 +68,70 @@ public class TimelineActivity extends AppCompatActivity {
             @Override
             public void onRefresh() {
                 populateHomeTimeline();
-
             }
         });
+    }
+
+    private void loadNextDataFromApi(long page) {
+        client.getNextPageOfTweet(new JsonHttpResponseHandler(){
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+                Log.d("Scroll",response.toString());
+                List<Tweet> tweetList = new ArrayList<>();
+                try {
+                    lowestId = response.getJSONObject(0).getLong("id");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                for (int i=0;i < response.length();i++){
+                    try {
+                        JSONObject jsonObject = response.getJSONObject(i);
+                        if (jsonObject.getLong("id") < lowestId){
+                            lowestId = jsonObject.getLong("id");
+                        }
+                        Tweet tweet = Tweet.fromJson(jsonObject);
+                        //add tweet to data source
+                        //tweetList.add(tweet);
+                        adapter.addToList(tweet);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                //tweetList.clear();
+                adapter.notifyDataSetChanged();
+                scrollListener.resetState();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                super.onFailure(statusCode, headers, throwable, errorResponse);
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                super.onFailure(statusCode, headers, responseString, throwable);
+            }
+        },page);
     }
 
     private void populateHomeTimeline() {
         client.getHomeTimeline(new JsonHttpResponseHandler(){
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                //Log.d("TwitterClient",response.toString());
+                Log.d("TwitterClient",response.toString());
                 List<Tweet> tweetsToAdd = new ArrayList<>();
-                for (int i=0;i < response.length();i++){
+                try {
+                    lowestId = response.getJSONObject(0).getLong("id");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                for (int i=0; i < response.length(); i++){
                     try {
                         JSONObject jsonObject = response.getJSONObject(i);
+                        if (jsonObject.getLong("id") < lowestId){
+                            lowestId = jsonObject.getLong("id");
+                        }
+                        Log.d("Arrays",jsonObject.getJSONObject("entities").getJSONArray("media").getJSONObject(0).toString());
                         Tweet tweet = Tweet.fromJson(jsonObject);
                         //add tweet to data source
                         tweetsToAdd.add(tweet);

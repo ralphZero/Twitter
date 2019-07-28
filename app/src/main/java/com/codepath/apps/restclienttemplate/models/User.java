@@ -2,12 +2,19 @@ package com.codepath.apps.restclienttemplate.models;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.parceler.Parcel;
 
+@Parcel
 public class User {
     private long uId;
     private String name;
     private String username;
     private String imgPath;
+    private Boolean verified;
+
+
+    public User() {
+    }
 
     public long getuId() {
         return uId;
@@ -31,6 +38,7 @@ public class User {
         user.username = jsonObject.getString("screen_name");
         user.uId = jsonObject.getLong("id");
         user.imgPath = jsonObject.getString("profile_image_url");
+        user.verified = jsonObject.getBoolean("verified");
         return user;
     }
 }
