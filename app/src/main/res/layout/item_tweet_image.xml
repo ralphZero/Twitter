@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp">
+
+    <ImageView
+        android:id="@+id/ivProfileImgIm"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="10dp"
+        android:contentDescription="@string/imgprofil"
+        tools:srcCompat="@tools:sample/avatars[2]" />
+
+    <TextView
+        android:id="@+id/tvNameIm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="5dp"
+        android:layout_toEndOf="@id/ivProfileImgIm"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@android:color/black"
+        android:textStyle="bold"
+        tools:text="Ghaly Nicolas" />
+
+    <TextView
+        android:id="@+id/tvUsernameIm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="5dp"
+        android:layout_toEndOf="@id/tvNameIm"
+        android:maxLines="1"
+        tools:text="\@Ghalynho10" />
+
+    <TextView
+        android:id="@+id/tvCreateAtIm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@id/tvUsernameIm"
+        android:maxLines="1"
+        tools:text="•10h" />
+
+    <TextView
+        android:id="@+id/tvBodyIm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvNameIm"
+        android:layout_toEndOf="@id/ivProfileImgIm"
+        android:autoLink="all"
+        android:textColor="@android:color/black"
+        tools:text="tweet here" />
+
+    <ImageView
+        android:id="@+id/ivPicMedia"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_below="@id/tvBodyIm"
+        android:layout_marginTop="5dp"
+        android:layout_toEndOf="@id/ivProfileImgIm"
+        android:contentDescription="@string/imgprofil"
+        android:scaleType="centerCrop"
+        tools:srcCompat="@tools:sample/backgrounds/scenic[7]" />
+</RelativeLayout>

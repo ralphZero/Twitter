@@ -32,6 +32,10 @@ public class User {
         return imgPath;
     }
 
+    public Boolean isVerified() {
+        return verified;
+    }
+
     public static User fromJson(JSONObject jsonObject) throws JSONException {
         User user = new User();
         user.name = jsonObject.getString("name");

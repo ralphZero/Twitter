@@ -11,23 +11,29 @@ import java.util.Map;
 
 @Parcel
 public class Entities {
-    private ArrayList<Media> media;
-    //private String media_url;
+    private String media_url;
+    private String type;
+
+    public String getMedia_url() {
+        return media_url;
+    }
+
+    public String getType() {
+        return type;
+    }
 
     public Entities() {
     }
 
     public static Entities fromJson(JSONObject jsonObject) throws JSONException {
         Entities entities = new Entities();
-        JSONArray array = jsonObject.getJSONArray("media");
-        ArrayList<Media> arrayList = new ArrayList<>();
-        for (int i=0;i<array.length();i++){
-            Media media = new Media(array.getJSONObject(i).getLong("id"),array.getJSONObject(i).getString("type"),array.getJSONObject(i).getString("media_url"));
-            arrayList.add(media);
+        if(jsonObject.has("media")){
+            entities.type = jsonObject.getJSONArray("media").getJSONObject(0).getString("type");
+            entities.media_url = jsonObject.getJSONArray("media").getJSONObject(0).getString("media_url");
+        }else {
+            entities.media_url = null;
+            entities.type = null;
         }
-        entities.media = arrayList;
-        //entities.media_type = jsonObject.getJSONArray("media").getJSONObject(0).getString("type");
-        //entities.media_url = jsonObject.getJSONArray("media").getJSONObject(0).getString("media_url");
         return entities;
     }
 }

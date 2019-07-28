@@ -33,6 +33,10 @@ public class Tweet {
         return user;
     }
 
+    public Entities getEntities() {
+        return entities;
+    }
+
     public static Tweet fromJson(JSONObject jsonObject) throws JSONException {
         Tweet tweet = new Tweet();
         tweet.body = jsonObject.getString("text");

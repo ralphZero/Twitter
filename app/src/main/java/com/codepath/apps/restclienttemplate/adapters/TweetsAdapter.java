@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.media.Image;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,10 +25,11 @@ import org.parceler.Parcels;
 
 import java.util.List;
 
-public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder> {
+public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Context context;
     private List<Tweet> list;
+
 
     public TweetsAdapter(Context context, List<Tweet> list) {
         this.context = context;
@@ -37,29 +39,102 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
     //inflate the layout
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(R.layout.item_tweet,viewGroup,false);
-        ViewHolder viewHolder = new ViewHolder(view);
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+        LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
+        RecyclerView.ViewHolder viewHolder = null;
+
+        switch (i){
+            case 1:
+                View v1 = inflater.inflate(R.layout.item_tweet_image,viewGroup,false);
+                viewHolder = new ViewHolderWithImage(v1);
+                break;
+            case 0:
+                View v2 = inflater.inflate(R.layout.item_tweet,viewGroup,false);
+                viewHolder = new ViewHolderNormal(v2);
+                break;
+        }
         return viewHolder;
     }
 
-    //bind
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
-        final Tweet tweet = list.get(i);
-        viewHolder.tvUsername.setText(tweet.getUser().getUsername());
-        viewHolder.tvName.setText(tweet.getUser().getName());
-        viewHolder.tvCreateAt.setText(tweet.getCreateAt());
-        viewHolder.tvBody.setText(tweet.getBody());
+    public int getItemViewType(int position) {
+        if(list.get(position).getEntities().getType() != null){
+            if(list.get(position).getEntities().getType().contentEquals("photo")){
+                return 1;
+            }else{
+                return 0;
+            }
+        }else{
+            return 0;
+        }
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        switch (holder.getItemViewType()){
+            case 1:
+                ViewHolderWithImage holder1 = (ViewHolderWithImage) holder;
+                configViewHolderWithImage(holder1,position);
+                break;
+            case 0:
+                ViewHolderNormal holder2 = (ViewHolderNormal) holder;
+                configViewHolder(holder2,position);
+                break;
+        }
+    }
+
+    private void configViewHolderWithImage(ViewHolderWithImage holder, int position) {
+        final Tweet tweet = list.get(position);
+        holder.tvName.setText(tweet.getUser().getName());
+        holder.tvUsername.setText(tweet.getUser().getUsername());
+        holder.tvCreateAt.setText(tweet.getCreateAt());
+        if(tweet.getUser().isVerified()){
+            holder.tvName.setCompoundDrawablesRelativeWithIntrinsicBounds(0,0,R.drawable.correct,0);
+            holder.tvName.setCompoundDrawablePadding(3);
+        }
+        holder.tvBody.setText(tweet.getBody());
+        Glide.with(context)
+                .load(tweet.getUser().getImgPath())
+                .placeholder(R.drawable.placeholder)
+                .error(R.drawable.placeholder)
+                .apply(new RequestOptions().centerInside().transform(new RoundedCorners(30)))
+                .into(holder.ivProfileImg);
+        /*int count = 0;
+        for (int i=0;i<tweet.getEntities().getMedia().size();i++){
+            if (!tweet.getEntities().getMedia().get(i).getMedia_url().isEmpty()){
+                count++;
+            }
+        }*/
+        //if(count>0){
+            Glide.with(context)
+                    .load(tweet.getEntities().getMedia_url())
+                    .placeholder(R.drawable.placeholder)
+                    .error(R.drawable.placeholder)
+                    .apply(new RequestOptions().centerInside().transform(new RoundedCorners(30)))
+                    .into(holder.ivTweetMedia);
+            Log.d("mylist",tweet.getEntities().getMedia_url());
+       // }
+
+    }
+
+    private void configViewHolder(ViewHolderNormal holder, int position) {
+        final Tweet tweet = list.get(position);
+        holder.tvUsername.setText(tweet.getUser().getUsername());
+        holder.tvName.setText(tweet.getUser().getName());
+        if(tweet.getUser().isVerified()){
+            holder.tvName.setCompoundDrawablesRelativeWithIntrinsicBounds(0,0,R.drawable.correct,0);
+            holder.tvName.setCompoundDrawablePadding(3);
+        }
+        holder.tvCreateAt.setText(tweet.getCreateAt());
+        holder.tvBody.setText(tweet.getBody());
 
         Glide.with(context)
                 .load(tweet.getUser().getImgPath())
                 .placeholder(R.drawable.placeholder)
                 .error(R.drawable.placeholder)
                 .apply(new RequestOptions().centerInside().transform(new RoundedCorners(30)))
-                .into(viewHolder.ivProfileImg);
-        viewHolder.container.setOnClickListener(new View.OnClickListener() {
+                .into(holder.ivProfileImg);
+        holder.container.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, DetailedView.class);
@@ -68,6 +143,12 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             }
         });
     }
+
+    //bind
+    /*@Override
+    public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
+
+    }*/
 
     @Override
     public int getItemCount() {
@@ -91,7 +172,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
     }
 
     //define viewholder
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolderNormal extends RecyclerView.ViewHolder{
 
         public TextView tvBody;
         public TextView tvCreateAt;
@@ -100,7 +181,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         public ImageView ivProfileImg;
         private RelativeLayout container;
 
-        public ViewHolder(@NonNull View itemView) {
+        public ViewHolderNormal(@NonNull View itemView) {
             super(itemView);
             tvBody = itemView.findViewById(R.id.tvBody);
             tvCreateAt = itemView.findViewById(R.id.tvCreateAt);
@@ -108,6 +189,27 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             tvName = itemView.findViewById(R.id.tvScreenName);
             tvUsername = itemView.findViewById(R.id.tvScreenUsername);
             container = itemView.findViewById(R.id.container);
+        }
+    }
+
+    public class ViewHolderWithImage extends RecyclerView.ViewHolder{
+
+        public TextView tvBody;
+        public TextView tvCreateAt;
+        public TextView tvName;
+        public TextView tvUsername;
+        public ImageView ivProfileImg;
+        public ImageView ivTweetMedia;
+
+
+        public ViewHolderWithImage(@NonNull View itemView) {
+            super(itemView);
+            tvBody = itemView.findViewById(R.id.tvBodyIm);
+            tvCreateAt = itemView.findViewById(R.id.tvCreateAtIm);
+            ivProfileImg = itemView.findViewById(R.id.ivProfileImgIm);
+            tvName = itemView.findViewById(R.id.tvNameIm);
+            tvUsername = itemView.findViewById(R.id.tvUsernameIm);
+            ivTweetMedia = itemView.findViewById(R.id.ivPicMedia);
         }
     }
 }

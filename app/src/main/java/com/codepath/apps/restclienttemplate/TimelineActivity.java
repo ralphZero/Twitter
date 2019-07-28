@@ -1,6 +1,7 @@
 package com.codepath.apps.restclienttemplate;
 
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
@@ -48,6 +49,7 @@ public class TimelineActivity extends AppCompatActivity {
                 android.R.color.holo_red_light);
 
         rvTweet = (RecyclerView) findViewById(R.id.rvTweet);
+        rvTweet.addItemDecoration(new DividerItemDecoration(getApplicationContext(),DividerItemDecoration.VERTICAL));
         list = new ArrayList<>();
         adapter = new TweetsAdapter(this,list);
 
