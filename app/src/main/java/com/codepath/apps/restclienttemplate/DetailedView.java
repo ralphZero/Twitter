@@ -33,7 +33,6 @@ public class DetailedView extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayUseLogoEnabled(true);
 
         tweet = Parcels.unwrap(getIntent().getParcelableExtra("tweet"));
 
@@ -80,8 +79,9 @@ public class DetailedView extends AppCompatActivity {
     }
 
     @Override
-    public boolean onNavigateUp() {
+    public boolean onSupportNavigateUp() {
         finish();
         return true;
     }
+
 }

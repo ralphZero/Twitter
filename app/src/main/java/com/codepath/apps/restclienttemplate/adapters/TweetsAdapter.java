@@ -18,6 +18,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.codepath.apps.restclienttemplate.DetailedView;
+import com.codepath.apps.restclienttemplate.ImageViewer;
 import com.codepath.apps.restclienttemplate.R;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 
@@ -117,6 +118,15 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             public void onClick(View v) {
                 Intent intent = new Intent(context, DetailedView.class);
                 intent.putExtra("tweet", Parcels.wrap(tweet));
+                context.startActivity(intent);
+            }
+        });
+
+        holder.ivTweetMedia.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, ImageViewer.class);
+                intent.putExtra("tweet",Parcels.wrap(tweet));
                 context.startActivity(intent);
             }
         });

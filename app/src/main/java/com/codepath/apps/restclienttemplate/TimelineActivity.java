@@ -8,6 +8,8 @@ import android.os.Bundle;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import com.codepath.apps.restclienttemplate.adapters.TweetsAdapter;
 import com.codepath.apps.restclienttemplate.models.Tweet;
@@ -27,6 +29,7 @@ public class TimelineActivity extends AppCompatActivity {
     RecyclerView rvTweet;
     List<Tweet> list;
     TweetsAdapter adapter;
+    ProgressBar progressBar;
 
     SwipeRefreshLayout refreshLayout;
     EndlessRecyclerViewScrollListener scrollListener;
@@ -48,6 +51,8 @@ public class TimelineActivity extends AppCompatActivity {
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
+        progressBar = findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.VISIBLE);
 
         rvTweet = (RecyclerView) findViewById(R.id.rvTweet);
         rvTweet.addItemDecoration(new DividerItemDecoration(getApplicationContext(),DividerItemDecoration.VERTICAL));
@@ -70,6 +75,7 @@ public class TimelineActivity extends AppCompatActivity {
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                progressBar.setVisibility(View.VISIBLE);
                 populateHomeTimeline();
             }
         });
@@ -128,6 +134,8 @@ public class TimelineActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+
+                progressBar.setVisibility(View.INVISIBLE);
 
                 for (int i=0; i < response.length(); i++){
                     try {
