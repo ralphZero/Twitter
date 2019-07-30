@@ -37,8 +37,9 @@ public class TimelineActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.timeline_toolbar);
         setSupportActionBar(toolbar);
+        setTitle("Home");
 
         client = TwitterApplication.getRestClient(this);
 
@@ -127,13 +128,14 @@ public class TimelineActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+
                 for (int i=0; i < response.length(); i++){
                     try {
                         JSONObject jsonObject = response.getJSONObject(i);
                         if (jsonObject.getLong("id") < lowestId){
                             lowestId = jsonObject.getLong("id");
                         }
-                        Log.d("Arrays",jsonObject.getJSONObject("entities").getJSONArray("media").getJSONObject(0).toString());
+                        //Log.d("Arrays",String.valueOf(jsonObject.getInt("retweet_count")));
                         Tweet tweet = Tweet.fromJson(jsonObject);
                         //add tweet to data source
                         tweetsToAdd.add(tweet);
@@ -141,6 +143,7 @@ public class TimelineActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                 }
+
                 //clear existing data
                 adapter.clear();
                 //show the data we just received

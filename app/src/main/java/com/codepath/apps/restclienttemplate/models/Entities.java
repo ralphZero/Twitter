@@ -11,6 +11,7 @@ import java.util.Map;
 
 @Parcel
 public class Entities {
+    //private long tId;
     private String media_url;
     private String type;
 
@@ -31,8 +32,9 @@ public class Entities {
             entities.type = jsonObject.getJSONArray("media").getJSONObject(0).getString("type");
             entities.media_url = jsonObject.getJSONArray("media").getJSONObject(0).getString("media_url");
         }else {
-            entities.media_url = null;
-            entities.type = null;
+            entities.media_url = "";
+            entities.type = "";
+            //entities.tId = 0;
         }
         return entities;
     }

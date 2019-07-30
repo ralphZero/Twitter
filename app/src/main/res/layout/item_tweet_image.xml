@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cnt_img"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="10dp">
@@ -54,14 +55,82 @@
         android:textColor="@android:color/black"
         tools:text="tweet here" />
 
-    <ImageView
-        android:id="@+id/ivPicMedia"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/crd"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="wrap_content"
         android:layout_below="@id/tvBodyIm"
-        android:layout_marginTop="5dp"
         android:layout_toEndOf="@id/ivProfileImgIm"
-        android:contentDescription="@string/imgprofil"
-        android:scaleType="centerCrop"
-        tools:srcCompat="@tools:sample/backgrounds/scenic[7]" />
+        app:cardCornerRadius="30dp">
+
+        <ImageView
+            android:id="@+id/imgViewer"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            tools:srcCompat="@tools:sample/backgrounds/scenic[15]" />
+
+    </androidx.cardview.widget.CardView>
+
+    <RelativeLayout
+        android:id="@+id/rll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/crd"
+        android:layout_marginTop="10dp"
+        android:layout_toEndOf="@id/ivProfileImgIm"
+        android:paddingTop="3dp"
+        android:paddingBottom="3dp">
+
+        <ImageButton
+            android:id="@+id/ib_reply"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="20dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="TODO"
+            app:srcCompat="@drawable/ic_reply_black_24dp" />
+
+        <TextView
+            android:id="@+id/ivReplyCountIm"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/ib_reply"
+            tools:text="200" />
+
+        <ImageButton
+            android:id="@+id/ib_retweet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_centerVertical="false"
+            android:background="@android:color/transparent"
+            app:srcCompat="@drawable/ic_vector_retweet_stroke" />
+
+        <TextView
+            android:id="@+id/tvRetweetCountIm"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:layout_toEndOf="@id/ib_retweet"
+            tools:text="32k" />
+
+        <ImageButton
+            android:id="@+id/ib_like"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="false"
+            android:layout_toStartOf="@id/tvLikeCountIm"
+            android:background="@android:color/transparent"
+            app:srcCompat="@drawable/ic_vector_heart_stroke" />
+
+        <TextView
+            android:id="@+id/tvLikeCountIm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="20dp"
+            tools:text="20.1k" />
+    </RelativeLayout>
 </RelativeLayout>

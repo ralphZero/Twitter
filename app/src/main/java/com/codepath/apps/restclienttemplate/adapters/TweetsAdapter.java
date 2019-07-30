@@ -5,11 +5,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
-import android.media.Image;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewStub;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -40,9 +40,9 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+
         LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
         RecyclerView.ViewHolder viewHolder = null;
-
         switch (i){
             case 1:
                 View v1 = inflater.inflate(R.layout.item_tweet_image,viewGroup,false);
@@ -54,6 +54,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 break;
         }
         return viewHolder;
+
     }
 
     @Override
@@ -88,39 +89,45 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         holder.tvName.setText(tweet.getUser().getName());
         holder.tvUsername.setText(tweet.getUser().getUsername());
         holder.tvCreateAt.setText(tweet.getCreateAt());
+        holder.tvLike.setText(tweet.getFavorite_count());
+        holder.tvRetweet.setText(tweet.getRetweet_count());
+
         if(tweet.getUser().isVerified()){
             holder.tvName.setCompoundDrawablesRelativeWithIntrinsicBounds(0,0,R.drawable.correct,0);
             holder.tvName.setCompoundDrawablePadding(3);
         }
         holder.tvBody.setText(tweet.getBody());
+
         Glide.with(context)
                 .load(tweet.getUser().getImgPath())
                 .placeholder(R.drawable.placeholder)
                 .error(R.drawable.placeholder)
                 .apply(new RequestOptions().centerInside().transform(new RoundedCorners(30)))
                 .into(holder.ivProfileImg);
-        /*int count = 0;
-        for (int i=0;i<tweet.getEntities().getMedia().size();i++){
-            if (!tweet.getEntities().getMedia().get(i).getMedia_url().isEmpty()){
-                count++;
-            }
-        }*/
-        //if(count>0){
-            Glide.with(context)
-                    .load(tweet.getEntities().getMedia_url())
-                    .placeholder(R.drawable.placeholder)
-                    .error(R.drawable.placeholder)
-                    .apply(new RequestOptions().centerInside().transform(new RoundedCorners(30)))
-                    .into(holder.ivTweetMedia);
-            Log.d("mylist",tweet.getEntities().getMedia_url());
-       // }
 
+        Glide.with(context)
+                .load(tweet.getEntities().getMedia_url())
+                .placeholder(R.drawable.placeholder)
+                .error(R.drawable.placeholder)
+                .apply(new RequestOptions().centerInside().transform(new RoundedCorners(30)))
+                .into(holder.ivTweetMedia);
+        //Log.d("mylist",tweet.getEntities().getMedia_url());
+        holder.container.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, DetailedView.class);
+                intent.putExtra("tweet", Parcels.wrap(tweet));
+                context.startActivity(intent);
+            }
+        });
     }
 
     private void configViewHolder(ViewHolderNormal holder, int position) {
         final Tweet tweet = list.get(position);
         holder.tvUsername.setText(tweet.getUser().getUsername());
         holder.tvName.setText(tweet.getUser().getName());
+        holder.tvLike.setText(tweet.getFavorite_count());
+        holder.tvRetweet.setText(tweet.getRetweet_count());
         if(tweet.getUser().isVerified()){
             holder.tvName.setCompoundDrawablesRelativeWithIntrinsicBounds(0,0,R.drawable.correct,0);
             holder.tvName.setCompoundDrawablePadding(3);
@@ -143,12 +150,6 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             }
         });
     }
-
-    //bind
-    /*@Override
-    public void onBindViewHolder(@NonNull ViewHolder viewHolder, int i) {
-
-    }*/
 
     @Override
     public int getItemCount() {
@@ -178,6 +179,8 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         public TextView tvCreateAt;
         public TextView tvName;
         public TextView tvUsername;
+        public TextView tvLike;
+        public TextView tvRetweet;
         public ImageView ivProfileImg;
         private RelativeLayout container;
 
@@ -189,6 +192,8 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             tvName = itemView.findViewById(R.id.tvScreenName);
             tvUsername = itemView.findViewById(R.id.tvScreenUsername);
             container = itemView.findViewById(R.id.container);
+            tvLike = itemView.findViewById(R.id.tvLikeCount);
+            tvRetweet = itemView.findViewById(R.id.tvRetweetCount);
         }
     }
 
@@ -197,9 +202,12 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         public TextView tvBody;
         public TextView tvCreateAt;
         public TextView tvName;
+        public TextView tvLike;
+        public TextView tvRetweet;
         public TextView tvUsername;
         public ImageView ivProfileImg;
         public ImageView ivTweetMedia;
+        public RelativeLayout container;
 
 
         public ViewHolderWithImage(@NonNull View itemView) {
@@ -208,8 +216,11 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             tvCreateAt = itemView.findViewById(R.id.tvCreateAtIm);
             ivProfileImg = itemView.findViewById(R.id.ivProfileImgIm);
             tvName = itemView.findViewById(R.id.tvNameIm);
+            tvLike = itemView.findViewById(R.id.tvLikeCountIm);
+            tvRetweet = itemView.findViewById(R.id.tvRetweetCountIm);
             tvUsername = itemView.findViewById(R.id.tvUsernameIm);
-            ivTweetMedia = itemView.findViewById(R.id.ivPicMedia);
+            ivTweetMedia = itemView.findViewById(R.id.imgViewer);
+            container = itemView.findViewById(R.id.cnt_img);
         }
     }
 }

@@ -19,6 +19,7 @@
         android:layout_below="@id/inc_toolbar1">
 
         <RelativeLayout
+            android:id="@+id/rlp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp">
@@ -42,6 +43,7 @@
                 android:layout_marginTop="10dp"
                 android:textColor="@color/TwitterBlack"
                 android:textSize="24sp"
+                android:autoLink="all"
                 tools:text="TextView" />
 
             <TextView
@@ -68,8 +70,47 @@
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:layout_below="@id/tvDetBody"
-                android:scaleType="centerInside"
+                android:scaleType="centerCrop"
                 tools:srcCompat="@tools:sample/backgrounds/scenic[19]" />
+
+            <RelativeLayout
+                android:id="@+id/rll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/ivImg"
+                android:layout_alignParentBottom="false"
+                android:layout_marginTop="10dp"
+                android:paddingTop="3dp"
+                android:paddingBottom="3dp">
+
+                <ImageButton
+                    android:id="@+id/ib_reply"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginLeft="20dp"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="TODO"
+                    app:srcCompat="@drawable/ic_reply_black_24dp" />
+
+                <ImageButton
+                    android:id="@+id/ib_retweet"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_centerHorizontal="false"
+                    android:background="@android:color/transparent"
+                    app:srcCompat="@drawable/ic_vector_retweet" />
+
+                <ImageButton
+                    android:id="@+id/ib_like"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="20dp"
+                    android:background="@android:color/transparent"
+                    app:srcCompat="@drawable/ic_vector_heart_stroke" />
+            </RelativeLayout>
         </RelativeLayout>
     </ScrollView>
 
