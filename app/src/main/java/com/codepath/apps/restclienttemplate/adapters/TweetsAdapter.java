@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
+import com.codepath.apps.restclienttemplate.DatabaseTweet;
 import com.codepath.apps.restclienttemplate.DetailedView;
 import com.codepath.apps.restclienttemplate.ImageViewer;
 import com.codepath.apps.restclienttemplate.R;
@@ -30,10 +31,11 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     private Context context;
     private List<Tweet> list;
-
+    private DatabaseTweet databaseTweet;
     public TweetsAdapter(Context context, List<Tweet> list) {
         this.context = context;
         this.list = list;
+        this.databaseTweet = new DatabaseTweet(context);
     }
 
     //inflate the layout
@@ -174,6 +176,28 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public void addAllTweets(List<Tweet> tweetList) {
         list.addAll(tweetList);
         notifyDataSetChanged();
+    }
+
+    public void saveTweetsToDatabase(){
+        //saving all list tweet to database
+        //this method must be called asynchronously
+        databaseTweet.RemoveEverything();
+        //later before saving we probably should remove everthing from the table then insert the new data
+        for (int i=0;i < list.size();i++){
+            long idTweet = list.get(i).gettId();
+            String body = list.get(i).getBody();
+            String createAt = list.get(i).getCreateAt();
+            int favorityCount = Integer.valueOf(list.get(i).getFavorite_count());
+            int retweetCount = Integer.valueOf(list.get(i).getRetweet_count());
+            String mediaType = list.get(i).getEntities().getType();
+            String mediaUrl = list.get(i).getEntities().getMedia_url();
+            long idUser = list.get(i).getUser().getuId();
+            String name = list.get(i).getUser().getName();
+            String username = list.get(i).getUser().getUsername();
+            String imagePath = list.get(i).getUser().getImgPath();
+            Boolean verified = list.get(i).getUser().isVerified();
+            databaseTweet.SaveTweetData(idTweet,body,createAt,favorityCount,retweetCount,mediaType,mediaUrl,idUser,name,username,imagePath,verified);
+        }
     }
 
     public void addToList(Tweet tweet) {
