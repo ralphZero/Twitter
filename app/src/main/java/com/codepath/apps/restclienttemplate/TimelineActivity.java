@@ -1,5 +1,6 @@
 package com.codepath.apps.restclienttemplate;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -26,6 +27,7 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +42,7 @@ public class TimelineActivity extends AppCompatActivity {
     ProgressBar progressBar;
     FloatingActionButton fab;
     ImageView ivLogo;
+    private static int REQUESTCODE = 10;
 
     SwipeRefreshLayout refreshLayout;
     EndlessRecyclerViewScrollListener scrollListener;
@@ -100,9 +103,19 @@ public class TimelineActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(TimelineActivity.this,ComposeActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent,REQUESTCODE);
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if(requestCode == REQUESTCODE && resultCode == RESULT_OK){
+            Tweet tweet = Parcels.unwrap(data.getParcelableExtra("tweet"));
+            list.add(0,tweet);
+            adapter.notifyItemInserted(0);
+            rvTweet.smoothScrollToPosition(0);
+        }
     }
 
     private void getMyUserInfo(){

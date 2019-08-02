@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="primaryDark">@color/TwitterBlue</color>
     <color name="TwitterBlue">#1DA1F2</color>
     <color name="TwitterBlack">#14171A</color>
     <color name="TwitterDarkGray">#657786</color>
