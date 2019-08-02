@@ -7,4 +7,10 @@
     <string name="intent_host">cprest</string>
     <string name="imgprofil">imgProfil</string>
 
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="what_s_happening">What\'s happening?</string>
+    <string name="tweet">Tweet</string>
+    <string name="todo">TODO</string>
+
 </resources>

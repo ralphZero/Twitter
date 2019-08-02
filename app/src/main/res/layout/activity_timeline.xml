@@ -42,5 +42,17 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal|center_vertical" />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        android:clickable="true"
+        app:backgroundTint="@color/TwitterBlue"
+        app:fabSize="normal"
+        app:srcCompat="@drawable/vector_compose_fab" />
+
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

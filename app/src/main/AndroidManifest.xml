@@ -14,7 +14,10 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ImageViewer" android:theme="@style/ImageViewerTheme"></activity>
+        <activity android:name=".ComposeActivity" android:theme="@style/ComposeTheme"></activity>
+        <activity
+            android:name=".ImageViewer"
+            android:theme="@style/ImageViewerTheme" />
         <activity android:name=".DetailedView" />
         <activity
             android:name=".SplashScreen"
