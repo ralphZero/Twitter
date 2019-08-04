@@ -20,6 +20,26 @@ public class User {
     public User() {
     }
 
+    public void setuId(long uId) {
+        this.uId = uId;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setImgPath(String imgPath) {
+        this.imgPath = imgPath;
+    }
+
+    public void setVerified(Boolean verified) {
+        this.verified = verified;
+    }
+
     public long getuId() {
         return uId;
     }
@@ -29,7 +49,7 @@ public class User {
     }
 
     public String getUsername() {
-        return "@"+username;
+        return username;
     }
 
     public String getImgPath() {

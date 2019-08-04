@@ -84,7 +84,7 @@
                 android:paddingBottom="3dp">
 
                 <ImageButton
-                    android:id="@+id/ib_reply"
+                    android:id="@+id/ib_reply_im"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"

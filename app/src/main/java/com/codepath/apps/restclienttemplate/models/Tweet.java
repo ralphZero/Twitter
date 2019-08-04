@@ -13,10 +13,56 @@ public class Tweet {
     private long tId;
     private int favorite_count;
     private int retweet_count;
+    private Boolean favorited;
+    private Boolean retweeted;
     private User user;
     private Entities entities;
 
     public Tweet() {
+    }
+
+    public void setBody(String body) {
+        this.body = body;
+    }
+
+    public void setCreateAt(String createAt) {
+        this.createAt = createAt;
+    }
+
+    public void settId(long tId) {
+        this.tId = tId;
+    }
+
+    public void setFavorite_count(int favorite_count) {
+        this.favorite_count = favorite_count;
+    }
+
+    public void setRetweet_count(int retweet_count) {
+        this.retweet_count = retweet_count;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Boolean getFavorited() {
+        return favorited;
+    }
+
+    public void setFavorited(Boolean favorited) {
+        this.favorited = favorited;
+    }
+
+    public Boolean getRetweeted() {
+        return retweeted;
+    }
+
+    public void setRetweeted(Boolean retweeted) {
+        this.retweeted = retweeted;
+    }
+
+    public void setEntities(Entities entities) {
+        this.entities = entities;
     }
 
     public String getBody() {
@@ -54,6 +100,8 @@ public class Tweet {
         tweet.createAt = jsonObject.getString("created_at");
         tweet.favorite_count = jsonObject.getInt("favorite_count");
         tweet.retweet_count = jsonObject.getInt("retweet_count");
+        tweet.favorited = jsonObject.getBoolean("favorited");
+        tweet.retweeted = jsonObject.getBoolean("retweeted");
         tweet.user = User.fromJson(jsonObject.getJSONObject("user"));
         tweet.entities = Entities.fromJson(jsonObject.getJSONObject("entities"));
         return tweet;

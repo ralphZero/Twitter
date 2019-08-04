@@ -26,6 +26,14 @@ public class Entities {
     public Entities() {
     }
 
+    public void setMedia_url(String media_url) {
+        this.media_url = media_url;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     public static Entities fromJson(JSONObject jsonObject) throws JSONException {
         Entities entities = new Entities();
         if(jsonObject.has("media")){

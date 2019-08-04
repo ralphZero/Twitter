@@ -7,6 +7,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -20,7 +21,9 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.codepath.apps.restclienttemplate.adapters.TweetsAdapter;
+import com.codepath.apps.restclienttemplate.models.Entities;
 import com.codepath.apps.restclienttemplate.models.Tweet;
+import com.codepath.apps.restclienttemplate.models.User;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
@@ -42,12 +45,14 @@ public class TimelineActivity extends AppCompatActivity {
     ProgressBar progressBar;
     FloatingActionButton fab;
     ImageView ivLogo;
+    public static String myUsername = null;
     private static int REQUESTCODE = 10;
-
     SwipeRefreshLayout refreshLayout;
     EndlessRecyclerViewScrollListener scrollListener;
     private long lowestId;
     private TwitterClient client;
+    DatabaseTweet database = new DatabaseTweet(this);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,7 +66,7 @@ public class TimelineActivity extends AppCompatActivity {
         ivLogo = findViewById(R.id.ivLogo);
 
         client = TwitterApplication.getRestClient(this);
-        getMyUserInfo();
+        getMyUsernameFromTwitter();
 
         refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
         refreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
@@ -90,6 +95,7 @@ public class TimelineActivity extends AppCompatActivity {
         rvTweet.setAdapter(adapter);
 
         populateHomeTimeline();
+        //getDataFromDatabase();
 
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -108,6 +114,79 @@ public class TimelineActivity extends AppCompatActivity {
         });
     }
 
+    private void getMyUsernameFromTwitter() {
+        client.getMyUserSettings(new JsonHttpResponseHandler(){
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                try {
+                    myUsername = response.getString("screen_name");
+                    getMyUserInfo(myUsername);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+
+            }
+        });
+    }
+
+    private void getDataFromDatabase() {
+        progressBar.setVisibility(View.INVISIBLE);
+        Cursor cursor = database.GetTweets();
+        if(cursor.getCount() != 0){
+            List<Tweet> tweetsToAdd = new ArrayList<>();
+            while (cursor.moveToNext()){
+                Tweet tweet = new Tweet();
+                tweet.settId(cursor.getLong(cursor.getColumnIndex("idTweet")));
+                tweet.setBody(cursor.getString(cursor.getColumnIndex("body")));
+                tweet.setCreateAt(cursor.getString(cursor.getColumnIndex("createAt")));
+                tweet.setFavorite_count(cursor.getInt(cursor.getColumnIndex("favoriteCount")));
+                tweet.setRetweet_count(cursor.getInt(cursor.getColumnIndex("retweetCount")));
+                if (cursor.getInt(cursor.getColumnIndex("favorited"))==1){
+                    tweet.setFavorited(true);
+                }else{
+                    tweet.setFavorited(false);
+                }
+
+                if(cursor.getInt(cursor.getColumnIndex("retweeted"))==1){
+                    tweet.setRetweeted(true);
+                }else {
+                    tweet.setRetweeted(false);
+                }
+                Entities entities = new Entities();
+                entities.setType(cursor.getString(cursor.getColumnIndex("mediaType")));
+                entities.setMedia_url(cursor.getString(cursor.getColumnIndex("mediaUrl")));
+                tweet.setEntities(entities);
+
+                User user = new User();
+                user.setuId(cursor.getLong(cursor.getColumnIndex("userId")));
+                user.setName(cursor.getString(cursor.getColumnIndex("name")));
+                user.setUsername(cursor.getString(cursor.getColumnIndex("username")));
+                user.setImgPath(cursor.getString(cursor.getColumnIndex("imgPath")));
+                if(cursor.getInt(cursor.getColumnIndex("verified"))==1)
+                    user.setVerified(true);
+                else
+                    user.setVerified(false);
+                tweet.setUser(user);
+                tweetsToAdd.add(tweet);
+            }
+            //clear existing data
+            adapter.clear();
+            //show the data we just received
+            adapter.addAllTweets(tweetsToAdd);
+        }else{
+            Log.d("mCursor","Egale a zero");
+        }
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if(requestCode == REQUESTCODE && resultCode == RESULT_OK){
@@ -118,8 +197,8 @@ public class TimelineActivity extends AppCompatActivity {
         }
     }
 
-    private void getMyUserInfo(){
-        client.getMyUserInfo(new JsonHttpResponseHandler(){
+    private void getMyUserInfo(String my_username){
+        client.getMyUserInfo(my_username ,new JsonHttpResponseHandler(){
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 //Log.d("Reponse",response.toString());
@@ -224,6 +303,8 @@ public class TimelineActivity extends AppCompatActivity {
                 adapter.clear();
                 //show the data we just received
                 adapter.addAllTweets(tweetsToAdd);
+                //put data to database
+                adapter.saveTweetsToDatabase();
                 //stop refreshing
                 refreshLayout.setRefreshing(false);
             }

@@ -3,10 +3,12 @@ package com.codepath.apps.restclienttemplate;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -37,7 +39,7 @@ public class ComposeActivity extends AppCompatActivity {
     TextInputLayout layout;
     ProgressBar progressBar;
 
-    private static int MAX_TWEET_LIMIT = 280;
+    private static int MAX_TWEET_LIMIT = 140;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +59,8 @@ public class ComposeActivity extends AppCompatActivity {
         layout.setCounterMaxLength(MAX_TWEET_LIMIT);
 
         etCompose = (EditText) findViewById(R.id.etCompose);
+        etCompose.requestFocus();
+
         btnCompose = (Button) findViewById(R.id.btnCompose);
 
         btnCompose.setOnClickListener(new View.OnClickListener() {
@@ -114,7 +118,7 @@ public class ComposeActivity extends AppCompatActivity {
         });
     }
     private void getMyUserInfo(){
-        client.getMyUserInfo(new JsonHttpResponseHandler(){
+        client.getMyUserInfo(TimelineActivity.myUsername,new JsonHttpResponseHandler(){
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 //Log.d("Reponse",response.toString());
