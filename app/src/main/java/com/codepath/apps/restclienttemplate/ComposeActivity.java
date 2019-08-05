@@ -38,8 +38,8 @@ public class ComposeActivity extends AppCompatActivity {
     private TwitterClient client;
     TextInputLayout layout;
     ProgressBar progressBar;
-
     private static int MAX_TWEET_LIMIT = 140;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -117,6 +117,7 @@ public class ComposeActivity extends AppCompatActivity {
             }
         });
     }
+
     private void getMyUserInfo(){
         client.getMyUserInfo(TimelineActivity.myUsername,new JsonHttpResponseHandler(){
             @Override

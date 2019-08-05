@@ -62,7 +62,10 @@
         android:layout_below="@id/tvBodyIm"
         android:layout_marginTop="10dp"
         android:layout_toEndOf="@id/ivProfileImgIm"
-        app:cardCornerRadius="30dp">
+        app:cardBackgroundColor="@android:color/transparent"
+        app:cardCornerRadius="15dp"
+        app:cardElevation="0dp"
+        app:cardMaxElevation="0dp">
 
         <ImageView
             android:id="@+id/imgViewer"
@@ -91,12 +94,13 @@
             android:layout_marginStart="20dp"
             android:background="@android:color/transparent"
             android:contentDescription="TODO"
-            app:srcCompat="@drawable/ic_reply_black_24dp" />
+            app:srcCompat="@drawable/vector_compose_dm_fab" />
 
         <TextView
-            android:id="@+id/ivReplyCountIm"
+            android:id="@+id/tvReplyCountIm"
             android:layout_width="50dp"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
             android:layout_toEndOf="@id/ib_reply_im"
             tools:text="200" />
 
@@ -112,6 +116,7 @@
             android:id="@+id/tvRetweetCountIm"
             android:layout_width="50dp"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
             android:layout_marginEnd="10dp"
             android:layout_toEndOf="@id/ib_retweet_im"
             tools:text="32k" />
@@ -130,6 +135,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
+            android:layout_marginLeft="5dp"
             android:layout_marginEnd="20dp"
             tools:text="20.1k" />
     </RelativeLayout>

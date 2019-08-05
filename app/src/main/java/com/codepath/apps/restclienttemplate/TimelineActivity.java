@@ -57,6 +57,7 @@ public class TimelineActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.timeline_toolbar);
         View imgLogo = getLayoutInflater().inflate(R.layout.custom_toolbar,null);
         toolbar.addView(imgLogo,new Toolbar.LayoutParams(Gravity.START));
@@ -95,7 +96,7 @@ public class TimelineActivity extends AppCompatActivity {
         rvTweet.setAdapter(adapter);
 
         populateHomeTimeline();
-        //getDataFromDatabase();
+        getDataFromDatabase();
 
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -189,11 +190,34 @@ public class TimelineActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if(requestCode == REQUESTCODE && resultCode == RESULT_OK){
-            Tweet tweet = Parcels.unwrap(data.getParcelableExtra("tweet"));
-            list.add(0,tweet);
-            adapter.notifyItemInserted(0);
-            rvTweet.smoothScrollToPosition(0);
+        if(requestCode == REQUESTCODE){
+            if(resultCode == RESULT_OK){
+                Tweet tweet = Parcels.unwrap(data.getParcelableExtra("tweet"));
+                list.add(0,tweet);
+                adapter.notifyItemInserted(0);
+                rvTweet.smoothScrollToPosition(0);
+            }
+        }else if (requestCode == 99){
+            if (resultCode == RESULT_OK){
+                //do some things
+                String typeRetour = data.getStringExtra("hasLiked");
+                if(typeRetour.contentEquals("true")){
+                    //c-a-d on a like
+                    Tweet tweet = Parcels.unwrap(data.getParcelableExtra("tweet"));
+                    int position = data.getIntExtra("position",-1);
+                    list.set(position,tweet);
+                    adapter.notifyDataSetChanged();
+                }else{
+                    //c-a-d on a soit retweet, soit reply
+                    Tweet tweet = Parcels.unwrap(data.getParcelableExtra("tweet"));
+                    list.add(0,tweet);
+                    adapter.notifyItemInserted(0);
+                    rvTweet.smoothScrollToPosition(0);
+                }
+
+            }else{
+                Log.d("IntentResult","RESULT CANCELED");
+            }
         }
     }
 
@@ -274,7 +298,7 @@ public class TimelineActivity extends AppCompatActivity {
         client.getHomeTimeline(new JsonHttpResponseHandler(){
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                //Log.d("TwitterClient",response.toString());
+                Log.d("TwitterClient",response.toString());
                 List<Tweet> tweetsToAdd = new ArrayList<>();
                 try {
                     lowestId = response.getJSONObject(0).getLong("id");
@@ -290,7 +314,7 @@ public class TimelineActivity extends AppCompatActivity {
                         if (jsonObject.getLong("id") < lowestId){
                             lowestId = jsonObject.getLong("id");
                         }
-                        //Log.d("Arrays",String.valueOf(jsonObject.getInt("retweet_count")));
+                        //Log.d("Arrays",String.valueOf(jsonObject.getString("source")));
                         Tweet tweet = Tweet.fromJson(jsonObject);
                         //add tweet to data source
                         tweetsToAdd.add(tweet);
@@ -298,7 +322,6 @@ public class TimelineActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                 }
-
                 //clear existing data
                 adapter.clear();
                 //show the data we just received

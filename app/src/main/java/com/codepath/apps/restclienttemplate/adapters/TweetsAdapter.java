@@ -30,6 +30,7 @@ import com.codepath.apps.restclienttemplate.DetailedView;
 import com.codepath.apps.restclienttemplate.ImageViewer;
 import com.codepath.apps.restclienttemplate.PatternEditableBuilder;
 import com.codepath.apps.restclienttemplate.R;
+import com.codepath.apps.restclienttemplate.TimeFormatter;
 import com.codepath.apps.restclienttemplate.TimelineActivity;
 import com.codepath.apps.restclienttemplate.TwitterClient;
 import com.codepath.apps.restclienttemplate.models.Tweet;
@@ -51,6 +52,8 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private Context context;
     private List<Tweet> list;
     private TwitterClient client;
+    static int REQUEST_CODE = 99;
+
     public TweetsAdapter(Context context, List<Tweet> list) {
         this.context = context;
         this.list = list;
@@ -105,57 +108,11 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         }
     }
 
-    private void configViewHolderWithImage(ViewHolderWithImage holder, int position) {
+    private void configViewHolderWithImage(final ViewHolderWithImage holder, final int position) {
         final Tweet tweet = list.get(position);
         holder.tvName.setText(tweet.getUser().getName());
         holder.tvUsername.setText("@"+tweet.getUser().getUsername());
-        holder.tvCreateAt.setText(tweet.getCreateAt());
-        holder.tvLike.setText(tweet.getFavorite_count());
-        holder.tvRetweet.setText(tweet.getRetweet_count());
-
-        if(tweet.getUser().isVerified()){
-            holder.tvName.setCompoundDrawablesRelativeWithIntrinsicBounds(0,0,R.drawable.correct,0);
-            holder.tvName.setCompoundDrawablePadding(3);
-        }
-        holder.tvBody.setText(tweet.getBody());
-
-        Glide.with(context)
-                .load(tweet.getUser().getImgPath())
-                .placeholder(R.drawable.placeholder)
-                .error(R.drawable.placeholder)
-                .apply(new RequestOptions().centerInside().transform(new RoundedCorners(30)))
-                .into(holder.ivProfileImg);
-
-        Glide.with(context)
-                .load(tweet.getEntities().getMedia_url())
-                .placeholder(R.drawable.placeholder)
-                .error(R.drawable.placeholder)
-                .apply(new RequestOptions().centerInside().transform(new RoundedCorners(30)))
-                .into(holder.ivTweetMedia);
-        //Log.d("mylist",tweet.getEntities().getMedia_url());
-        holder.container.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, DetailedView.class);
-                intent.putExtra("tweet", Parcels.wrap(tweet));
-                context.startActivity(intent);
-            }
-        });
-
-        holder.ivTweetMedia.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, ImageViewer.class);
-                intent.putExtra("tweet",Parcels.wrap(tweet));
-                context.startActivity(intent);
-            }
-        });
-    }
-
-    private void configViewHolder(final ViewHolderNormal holder, final int position) {
-        final Tweet tweet = list.get(position);
-        holder.tvUsername.setText("@"+tweet.getUser().getUsername());
-        holder.tvName.setText(tweet.getUser().getName());
+        holder.tvCreateAt.setText(" • "+TimeFormatter.getTimeDifference(tweet.getCreateAt()));
         holder.tvLike.setText(tweet.getFavorite_count());
         holder.tvRetweet.setText(tweet.getRetweet_count());
 
@@ -179,16 +136,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             holder.tvName.setCompoundDrawablesRelativeWithIntrinsicBounds(0,0,R.drawable.correct,0);
             holder.tvName.setCompoundDrawablePadding(3);
         }
-        holder.tvCreateAt.setText(tweet.getCreateAt());
         holder.tvBody.setText(tweet.getBody());
-        new PatternEditableBuilder().
-                addPattern(Pattern.compile("\\@(\\w+)"), Color.BLUE,
-                        new PatternEditableBuilder.SpannableClickedListener() {
-                            @Override
-                            public void onSpanClicked(String text) {
-                                //Toast.makeText(MainActivity.this, "Clicked username: " + text, Toast.LENGTH_SHORT).show();
-                            }
-                        }).into(holder.tvBody);
 
         Glide.with(context)
                 .load(tweet.getUser().getImgPath())
@@ -196,14 +144,34 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 .error(R.drawable.placeholder)
                 .apply(new RequestOptions().centerInside().transform(new RoundedCorners(30)))
                 .into(holder.ivProfileImg);
+
+        Glide.with(context)
+                .load(tweet.getEntities().getMedia_url())
+                .placeholder(R.drawable.placeholder)
+                .error(R.drawable.placeholder)
+                .apply(new RequestOptions().centerInside().transform(new RoundedCorners(15)))
+                .into(holder.ivTweetMedia);
+        //Log.d("mylist",tweet.getEntities().getMedia_url());
+
         holder.container.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, DetailedView.class);
                 intent.putExtra("tweet", Parcels.wrap(tweet));
+                intent.putExtra("position",position);
+                ((TimelineActivity) context).startActivityForResult(intent,REQUEST_CODE);
+            }
+        });
+
+        holder.ivTweetMedia.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, ImageViewer.class);
+                intent.putExtra("tweet",Parcels.wrap(tweet));
                 context.startActivity(intent);
             }
         });
+
         holder.ibLike.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -306,6 +274,173 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                         }
                     });
                 }
+            }
+        });
+
+        holder.ibReply.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ReplyToPost(tweet,v);
+            }
+        });
+    }
+
+    private void configViewHolder(final ViewHolderNormal holder, final int position) {
+        final Tweet tweet = list.get(position);
+        holder.tvUsername.setText("@"+tweet.getUser().getUsername());
+        holder.tvName.setText(tweet.getUser().getName());
+        holder.tvLike.setText(tweet.getFavorite_count());
+        holder.tvRetweet.setText(tweet.getRetweet_count());
+
+        if (tweet.getRetweeted()){
+            holder.ibRetweet.setImageResource(R.drawable.ic_vector_retweet);
+            holder.tvRetweet.setTextColor(Color.parseColor("#ff17bf63"));
+        }else{
+            holder.ibRetweet.setImageResource(R.drawable.ic_vector_retweet_stroke);
+            holder.tvRetweet.setTextColor(Color.BLACK);
+        }
+
+        if(tweet.getFavorited()){
+            holder.ibLike.setImageResource(R.drawable.ic_vector_heart);
+            holder.tvLike.setTextColor(Color.parseColor("#ffe0245e"));
+        }else{
+            holder.ibLike.setImageResource(R.drawable.ic_vector_heart_stroke);
+            holder.tvLike.setTextColor(Color.BLACK);
+        }
+
+        if(tweet.getUser().isVerified()){
+            holder.tvName.setCompoundDrawablesRelativeWithIntrinsicBounds(0,0,R.drawable.correct,0);
+            holder.tvName.setCompoundDrawablePadding(3);
+        }
+        holder.tvCreateAt.setText(" • "+TimeFormatter.getTimeDifference(tweet.getCreateAt()));
+        holder.tvBody.setText(tweet.getBody());
+        new PatternEditableBuilder().
+                addPattern(Pattern.compile("\\@(\\w+)"), Color.parseColor("#5EBBB2"),
+                        new PatternEditableBuilder.SpannableClickedListener() {
+                            @Override
+                            public void onSpanClicked(String text) {
+                                //Toast.makeText(MainActivity.this, "Clicked username: " + text, Toast.LENGTH_SHORT).show();
+                            }
+                        }).into(holder.tvBody);
+
+        Glide.with(context)
+                .load(tweet.getUser().getImgPath())
+                .placeholder(R.drawable.placeholder)
+                .error(R.drawable.placeholder)
+                .apply(new RequestOptions().centerInside().transform(new RoundedCorners(30)))
+                .into(holder.ivProfileImg);
+
+        holder.container.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, DetailedView.class);
+                intent.putExtra("tweet", Parcels.wrap(tweet));
+                intent.putExtra("position",position);
+                ((TimelineActivity) context).startActivityForResult(intent,REQUEST_CODE);
+            }
+        });
+        holder.ibLike.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            if(tweet.getFavorited()){
+                //clicked to unlike
+                client.dislikeThistweet(tweet.gettId(),new JsonHttpResponseHandler(){
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                        holder.ibLike.setImageResource(R.drawable.ic_vector_heart_stroke);
+                        holder.tvLike.setTextColor(Color.parseColor("#ffe0245e"));
+                        try {
+                            Tweet tweet2 = Tweet.fromJson(response);
+                            list.set(position,tweet2);
+                            notifyDataSetChanged();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                        super.onFailure(statusCode, headers, throwable, errorResponse);
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                        super.onFailure(statusCode, headers, responseString, throwable);
+                    }
+                });
+            }else {
+                //clicked to like
+                client.likeThisTweet(tweet.gettId(),new JsonHttpResponseHandler(){
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                        //Log.d("Liked",response.toString());
+                        try {
+                            holder.ibLike.setImageResource(R.drawable.ic_vector_heart);
+                            Tweet tweet1 = Tweet.fromJson(response);
+                            list.set(position,tweet1);
+                            notifyDataSetChanged();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                        super.onFailure(statusCode, headers, throwable, errorResponse);
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                        super.onFailure(statusCode, headers, responseString, throwable);
+                    }
+                });
+            }
+            }
+        });
+
+        holder.ibRetweet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            if (tweet.getRetweeted()) {
+                //click to unretweet
+                client.unretweetThisPost(String.valueOf(tweet.gettId()),new JsonHttpResponseHandler(){
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                        Log.d("retweet",response.toString());
+                        holder.ibRetweet.setImageResource(R.drawable.ic_vector_retweet_stroke);
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                        super.onFailure(statusCode, headers, throwable, errorResponse);
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                        super.onFailure(statusCode, headers, responseString, throwable);
+                    }
+                });
+            }else{
+                //click to retweet
+                client.retweetThisPost(String.valueOf(tweet.gettId()),new JsonHttpResponseHandler(){
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                        Log.d("retweet",response.toString());
+                        holder.ibRetweet.setImageResource(R.drawable.ic_vector_retweet);
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                        super.onFailure(statusCode, headers, throwable, errorResponse);
+                        Log.e("retweetErr",errorResponse.toString());
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                        super.onFailure(statusCode, headers, responseString, throwable);
+                    }
+                });
+            }
             }
         });
 
@@ -471,7 +606,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         public ImageButton ibLike;
         public ImageButton ibRetweet;
         public ImageButton ibReply;
-        private RelativeLayout container;
+        public RelativeLayout container;
 
         public ViewHolderNormal(@NonNull View itemView) {
             super(itemView);
@@ -496,9 +631,15 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         public TextView tvName;
         public TextView tvLike;
         public TextView tvRetweet;
+        public TextView tvReply;
         public TextView tvUsername;
         public ImageView ivProfileImg;
         public ImageView ivTweetMedia;
+
+        public ImageButton ibReply;
+        public ImageButton ibRetweet;
+        public ImageButton ibLike;
+
         public RelativeLayout container;
 
 
@@ -510,9 +651,13 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             tvName = itemView.findViewById(R.id.tvNameIm);
             tvLike = itemView.findViewById(R.id.tvLikeCountIm);
             tvRetweet = itemView.findViewById(R.id.tvRetweetCountIm);
+            tvReply = itemView.findViewById(R.id.tvReplyCountIm);
             tvUsername = itemView.findViewById(R.id.tvUsernameIm);
             ivTweetMedia = itemView.findViewById(R.id.imgViewer);
             container = itemView.findViewById(R.id.cnt_img);
+            ibReply = itemView.findViewById(R.id.ib_reply_im);
+            ibLike = itemView.findViewById(R.id.ib_like_im);
+            ibRetweet = itemView.findViewById(R.id.ib_retweet_im);
         }
     }
 
@@ -531,6 +676,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 int retweetCount = Integer.valueOf(list.get(i).getRetweet_count());
                 String mediaType = list.get(i).getEntities().getType();
                 String mediaUrl = list.get(i).getEntities().getMedia_url();
+                String source = list.get(i).getSource();
                 long idUser = list.get(i).getUser().getuId();
                 String name = list.get(i).getUser().getName();
                 String username = list.get(i).getUser().getUsername();
@@ -538,7 +684,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 Boolean verified = list.get(i).getUser().isVerified();
                 Boolean favorited = list.get(i).getFavorited();
                 Boolean retweeted = list.get(i).getRetweeted();
-                databaseTweet.SaveTweetData(idTweet,body,createAt,favorityCount,retweetCount,favorited,retweeted,mediaType,mediaUrl,idUser,name,username,imagePath,verified);
+                databaseTweet.SaveTweetData(idTweet,body,createAt,favorityCount,retweetCount,favorited,retweeted,mediaType,mediaUrl,source,idUser,name,username,imagePath,verified);
             }
             return null;
         }

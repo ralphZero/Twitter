@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 
 public class DatabaseTweet extends SQLiteOpenHelper {
-    private static String create = "CREATE TABLE IF NOT EXISTS tweet(idTweet INTEGER PRIMARY KEY NOT NULL,body TEXT NOT NULL, createAt TEXT NOT NULL, favoriteCount INTEGER, retweetCount INTEGER, favorited INTEGER NOT NULL, retweeted INTEGER NOT NULL, mediaType TEXT NOT NULL, mediaUrl TEXT, userId INTEGER NOT NULL, name TEXT NOT NULL, username TEXT NOT NULL, imgPath TEXT, verified INTEGER NOT NULL)";
+    private static String create = "CREATE TABLE IF NOT EXISTS tweet(idTweet INTEGER PRIMARY KEY NOT NULL,body TEXT NOT NULL, createAt TEXT NOT NULL, favoriteCount INTEGER, retweetCount INTEGER, favorited INTEGER NOT NULL, retweeted INTEGER NOT NULL, mediaType TEXT NOT NULL, mediaUrl TEXT, source TEXT NOT NULL, userId INTEGER NOT NULL, name TEXT NOT NULL, username TEXT NOT NULL, imgPath TEXT, verified INTEGER NOT NULL)";
 
 
     public DatabaseTweet(Context context) {
@@ -25,7 +25,7 @@ public class DatabaseTweet extends SQLiteOpenHelper {
 
     }
 
-    public long SaveTweetData(long idTweet,String body,String createAt,int favoriteCount,int retweetCount, Boolean liked, Boolean retweeted,String mediaType,String mediaUrl,long userId,String name,String username, String imgPath,Boolean check){
+    public long SaveTweetData(long idTweet,String body,String createAt,int favoriteCount,int retweetCount, Boolean liked, Boolean retweeted, String mediaType, String mediaUrl, String source,long userId,String name,String username, String imgPath,Boolean check){
         SQLiteDatabase database = this.getWritableDatabase();
         int favorited = liked ? 1 : 0;
         int retweet = retweeted ? 1 : 0;
@@ -38,6 +38,7 @@ public class DatabaseTweet extends SQLiteOpenHelper {
         values.put("retweetCount",retweetCount);
         values.put("favorited",favorited);
         values.put("retweeted",retweet);
+        values.put("source",source);
         values.put("mediaType",mediaType);
         values.put("mediaUrl",mediaUrl);
         values.put("userId",userId);

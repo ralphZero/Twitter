@@ -10,6 +10,7 @@ import org.parceler.Parcel;
 public class Tweet {
     private String body;
     private String createAt;
+    private String source;
     private long tId;
     private int favorite_count;
     private int retweet_count;
@@ -19,6 +20,15 @@ public class Tweet {
     private Entities entities;
 
     public Tweet() {
+    }
+
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
     }
 
     public void setBody(String body) {
@@ -70,7 +80,7 @@ public class Tweet {
     }
 
     public String getCreateAt() {
-        return " • "+TimeFormatter.getTimeDifference(createAt);
+        return createAt;
     }
 
     public long gettId() {
@@ -103,6 +113,7 @@ public class Tweet {
         tweet.favorited = jsonObject.getBoolean("favorited");
         tweet.retweeted = jsonObject.getBoolean("retweeted");
         tweet.user = User.fromJson(jsonObject.getJSONObject("user"));
+        tweet.source = jsonObject.getString("source");
         tweet.entities = Entities.fromJson(jsonObject.getJSONObject("entities"));
         return tweet;
     }
