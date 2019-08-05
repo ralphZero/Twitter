@@ -94,23 +94,23 @@ public class ComposeActivity extends AppCompatActivity {
 
                     @Override
                     public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                        Log.e("RepTweet","failed "+responseString);
-                        if (!responseString.contentEquals("")){
-                            Toast.makeText(getApplicationContext(),responseString,Toast.LENGTH_SHORT).show();
+                        if(!responseString.isEmpty()){
+                            Toast.makeText(ComposeActivity.this,"Error "+responseString+". Please try again.",Toast.LENGTH_LONG).show();
                         }
                     }
 
                     @Override
                     public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                        Log.e("RepTweet","failed "+errorResponse.toString());
-                        if(errorResponse.has("errors")){
-                            try {
-                                JSONObject jsonObject = errorResponse.getJSONObject("errors");
-                                String message = jsonObject.getString("message");
-                                Toast.makeText(getApplicationContext(),message,Toast.LENGTH_LONG).show();
-                            } catch (JSONException e) {
-                                e.printStackTrace();
+                        if (errorResponse!= null){
+                            if(errorResponse.has("errors")){
+                                try {
+                                    Toast.makeText(ComposeActivity.this,"Error "+errorResponse.getInt("code")+", "+errorResponse.getString("message"),Toast.LENGTH_LONG).show();
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
                             }
+                        }else{
+                            Toast.makeText(ComposeActivity.this,"Can't connect with server.",Toast.LENGTH_LONG).show();
                         }
                     }
                 });
@@ -137,13 +137,25 @@ public class ComposeActivity extends AppCompatActivity {
 
             }
             @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                if(!responseString.isEmpty()){
+                    Toast.makeText(ComposeActivity.this,"Error "+responseString+". Please try again.",Toast.LENGTH_LONG).show();
+                }
             }
 
             @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                if (errorResponse!= null){
+                    if(errorResponse.has("errors")){
+                        try {
+                            Toast.makeText(ComposeActivity.this,"Error "+errorResponse.getInt("code")+", "+errorResponse.getString("message"),Toast.LENGTH_LONG).show();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }else{
+                    Toast.makeText(ComposeActivity.this,"Can't connect with server.",Toast.LENGTH_LONG).show();
+                }
             }
         });
     }

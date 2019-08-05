@@ -7,15 +7,19 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
@@ -95,8 +99,9 @@ public class TimelineActivity extends AppCompatActivity {
         rvTweet.setOnScrollListener(scrollListener);
         rvTweet.setAdapter(adapter);
 
-        populateHomeTimeline();
         getDataFromDatabase();
+        populateHomeTimeline();
+
 
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -120,7 +125,13 @@ public class TimelineActivity extends AppCompatActivity {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 try {
+
                     myUsername = response.getString("screen_name");
+                    SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(TimelineActivity.this);
+                    SharedPreferences.Editor edit = pref.edit();
+                    edit.putString("username", myUsername);
+                    edit.commit();
+
                     getMyUserInfo(myUsername);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -128,13 +139,28 @@ public class TimelineActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                if(!responseString.isEmpty()){
+                    Toast.makeText(TimelineActivity.this,"Error "+responseString+". Please try again.",Toast.LENGTH_LONG).show();
+                }
             }
 
             @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                if (errorResponse!= null){
+                    if(errorResponse.has("errors")){
+                        try {
+                            Toast.makeText(TimelineActivity.this,"Error "+errorResponse.getInt("code")+", "+errorResponse.getString("message"),Toast.LENGTH_LONG).show();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }else{
+                    Toast.makeText(TimelineActivity.this,"Can't connect with server.",Toast.LENGTH_LONG).show();
+                    SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(TimelineActivity.this);
+                    String username = pref.getString("username", "");
+                    myUsername = username;
+                }
             }
         });
     }
@@ -144,12 +170,14 @@ public class TimelineActivity extends AppCompatActivity {
         Cursor cursor = database.GetTweets();
         if(cursor.getCount() != 0){
             List<Tweet> tweetsToAdd = new ArrayList<>();
-            while (cursor.moveToNext()){
+
+            for (cursor.moveToLast(); !cursor.isBeforeFirst(); cursor.moveToPrevious()){
                 Tweet tweet = new Tweet();
                 tweet.settId(cursor.getLong(cursor.getColumnIndex("idTweet")));
                 tweet.setBody(cursor.getString(cursor.getColumnIndex("body")));
                 tweet.setCreateAt(cursor.getString(cursor.getColumnIndex("createAt")));
                 tweet.setFavorite_count(cursor.getInt(cursor.getColumnIndex("favoriteCount")));
+                tweet.setSource(cursor.getString(cursor.getColumnIndex("source")));
                 tweet.setRetweet_count(cursor.getInt(cursor.getColumnIndex("retweetCount")));
                 if (cursor.getInt(cursor.getColumnIndex("favorited"))==1){
                     tweet.setFavorited(true);
@@ -228,6 +256,13 @@ public class TimelineActivity extends AppCompatActivity {
                 //Log.d("Reponse",response.toString());
                 try {
                     String profileImg = response.getString("profile_image_url");
+
+                    //save to ensure persistence
+                    SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(TimelineActivity.this);
+                    SharedPreferences.Editor edit = pref.edit();
+                    edit.putString("profileImage", profileImg);
+                    edit.apply();
+
                     Glide.with(TimelineActivity.this)
                             .load(profileImg)
                             .placeholder(R.drawable.placeholder)
@@ -241,13 +276,34 @@ public class TimelineActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                if(!responseString.isEmpty()){
+                    Toast.makeText(TimelineActivity.this,"Error "+responseString+". Please try again.",Toast.LENGTH_LONG).show();
+                }
             }
 
             @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                if (errorResponse!= null){
+                    if(errorResponse.has("errors")){
+                        try {
+                            Toast.makeText(TimelineActivity.this,"Error "+errorResponse.getInt("code")+", "+errorResponse.getString("message"),Toast.LENGTH_LONG).show();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }else{
+                    Toast.makeText(TimelineActivity.this,"Can't connect with server.",Toast.LENGTH_LONG).show();
+                    SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(TimelineActivity.this);
+                    String profileImg = pref.getString("profileImage", "");
 
+                    Glide.with(TimelineActivity.this)
+                            .load(profileImg)
+                            .placeholder(R.drawable.placeholder)
+                            .error(R.drawable.placeholder)
+                            .apply(new RequestOptions().centerInside().transform(new RoundedCorners(30)))
+                            .into(ivLogo);
+                }
             }
         });
     }
@@ -283,13 +339,25 @@ public class TimelineActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                super.onFailure(statusCode, headers, throwable, errorResponse);
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                if(!responseString.isEmpty()){
+                    Toast.makeText(TimelineActivity.this,"Error "+responseString+". Please try again.",Toast.LENGTH_LONG).show();
+                }
             }
 
             @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                super.onFailure(statusCode, headers, responseString, throwable);
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                if (errorResponse!= null){
+                    if(errorResponse.has("errors")){
+                        try {
+                            Toast.makeText(TimelineActivity.this,"Error "+errorResponse.getInt("code")+", "+errorResponse.getString("message"),Toast.LENGTH_LONG).show();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }else{
+                    Toast.makeText(TimelineActivity.this,"Can't connect with server.",Toast.LENGTH_LONG).show();
+                }
             }
         },page);
     }
@@ -334,12 +402,24 @@ public class TimelineActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                Log.d("TwitterClient",responseString);
+                if(!responseString.isEmpty()){
+                    Toast.makeText(TimelineActivity.this,"Error "+responseString+". Please try again.",Toast.LENGTH_LONG).show();
+                }
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                Log.d("TwitterClient",errorResponse.toString());
+                if (errorResponse!= null){
+                    if(errorResponse.has("errors")){
+                        try {
+                            Toast.makeText(TimelineActivity.this,"Error "+errorResponse.getInt("code")+", "+errorResponse.getString("message"),Toast.LENGTH_LONG).show();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }else{
+                    Toast.makeText(TimelineActivity.this,"Can't connect with server.",Toast.LENGTH_LONG).show();
+                }
             }
         });
     }

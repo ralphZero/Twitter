@@ -192,13 +192,25 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                         }
 
                         @Override
-                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                            super.onFailure(statusCode, headers, throwable, errorResponse);
+                        public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                            if(!responseString.isEmpty()){
+                                Toast.makeText(context,"Error "+responseString+". Please try again.",Toast.LENGTH_LONG).show();
+                            }
                         }
 
                         @Override
-                        public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                            super.onFailure(statusCode, headers, responseString, throwable);
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                            if (errorResponse!= null){
+                                if(errorResponse.has("errors")){
+                                    try {
+                                        Toast.makeText(context,"Error "+errorResponse.getInt("code")+", "+errorResponse.getString("message"),Toast.LENGTH_LONG).show();
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }else{
+                                Toast.makeText(context,"Can't connect with server.",Toast.LENGTH_LONG).show();
+                            }
                         }
                     });
                 }else {
@@ -218,13 +230,25 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                         }
 
                         @Override
-                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                            super.onFailure(statusCode, headers, throwable, errorResponse);
+                        public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                            if(!responseString.isEmpty()){
+                                Toast.makeText(context,"Error "+responseString+". Please try again.",Toast.LENGTH_LONG).show();
+                            }
                         }
 
                         @Override
-                        public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                            super.onFailure(statusCode, headers, responseString, throwable);
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                            if (errorResponse!= null){
+                                if(errorResponse.has("errors")){
+                                    try {
+                                        Toast.makeText(context,"Error "+errorResponse.getInt("code")+", "+errorResponse.getString("message"),Toast.LENGTH_LONG).show();
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }else{
+                                Toast.makeText(context,"Can't connect with server.",Toast.LENGTH_LONG).show();
+                            }
                         }
                     });
                 }
@@ -244,13 +268,25 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                         }
 
                         @Override
-                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                            super.onFailure(statusCode, headers, throwable, errorResponse);
+                        public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                            if(!responseString.isEmpty()){
+                                Toast.makeText(context,"Error "+responseString+". Please try again.",Toast.LENGTH_LONG).show();
+                            }
                         }
 
                         @Override
-                        public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                            super.onFailure(statusCode, headers, responseString, throwable);
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                            if (errorResponse!= null){
+                                if(errorResponse.has("errors")){
+                                    try {
+                                        Toast.makeText(context,"Error "+errorResponse.getInt("code")+", "+errorResponse.getString("message"),Toast.LENGTH_LONG).show();
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }else{
+                                Toast.makeText(context,"Can't connect with server.",Toast.LENGTH_LONG).show();
+                            }
                         }
                     });
                 }else{
@@ -263,14 +299,25 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                         }
 
                         @Override
-                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                            super.onFailure(statusCode, headers, throwable, errorResponse);
-                            Log.e("retweetErr",errorResponse.toString());
+                        public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                            if(!responseString.isEmpty()){
+                                Toast.makeText(context,"Error "+responseString+". Please try again.",Toast.LENGTH_LONG).show();
+                            }
                         }
 
                         @Override
-                        public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                            super.onFailure(statusCode, headers, responseString, throwable);
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                            if (errorResponse!= null){
+                                if(errorResponse.has("errors")){
+                                    try {
+                                        Toast.makeText(context,"Error "+errorResponse.getInt("code")+", "+errorResponse.getString("message"),Toast.LENGTH_LONG).show();
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }else{
+                                Toast.makeText(context,"Can't connect with server.",Toast.LENGTH_LONG).show();
+                            }
                         }
                     });
                 }
@@ -359,13 +406,25 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                     }
 
                     @Override
-                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                        super.onFailure(statusCode, headers, throwable, errorResponse);
+                    public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                        if(!responseString.isEmpty()){
+                            Toast.makeText(context,"Error "+responseString+". Please try again.",Toast.LENGTH_LONG).show();
+                        }
                     }
 
                     @Override
-                    public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                        super.onFailure(statusCode, headers, responseString, throwable);
+                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                        if (errorResponse!= null){
+                            if(errorResponse.has("errors")){
+                                try {
+                                    Toast.makeText(context,"Error "+errorResponse.getInt("code")+", "+errorResponse.getString("message"),Toast.LENGTH_LONG).show();
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }else{
+                            Toast.makeText(context,"Can't connect with server.",Toast.LENGTH_LONG).show();
+                        }
                     }
                 });
             }else {
@@ -385,13 +444,25 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                     }
 
                     @Override
-                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                        super.onFailure(statusCode, headers, throwable, errorResponse);
+                    public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                        if(!responseString.isEmpty()){
+                            Toast.makeText(context,"Error "+responseString+". Please try again.",Toast.LENGTH_LONG).show();
+                        }
                     }
 
                     @Override
-                    public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                        super.onFailure(statusCode, headers, responseString, throwable);
+                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                        if (errorResponse!= null){
+                            if(errorResponse.has("errors")){
+                                try {
+                                    Toast.makeText(context,"Error "+errorResponse.getInt("code")+", "+errorResponse.getString("message"),Toast.LENGTH_LONG).show();
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }else{
+                            Toast.makeText(context,"Can't connect with server.",Toast.LENGTH_LONG).show();
+                        }
                     }
                 });
             }
@@ -411,13 +482,25 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                     }
 
                     @Override
-                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                        super.onFailure(statusCode, headers, throwable, errorResponse);
+                    public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                        if(!responseString.isEmpty()){
+                            Toast.makeText(context,"Error "+responseString+". Please try again.",Toast.LENGTH_LONG).show();
+                        }
                     }
 
                     @Override
-                    public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                        super.onFailure(statusCode, headers, responseString, throwable);
+                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                        if (errorResponse!= null){
+                            if(errorResponse.has("errors")){
+                                try {
+                                    Toast.makeText(context,"Error "+errorResponse.getInt("code")+", "+errorResponse.getString("message"),Toast.LENGTH_LONG).show();
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }else{
+                            Toast.makeText(context,"Can't connect with server.",Toast.LENGTH_LONG).show();
+                        }
                     }
                 });
             }else{
@@ -430,14 +513,25 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                     }
 
                     @Override
-                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                        super.onFailure(statusCode, headers, throwable, errorResponse);
-                        Log.e("retweetErr",errorResponse.toString());
+                    public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                        if(!responseString.isEmpty()){
+                            Toast.makeText(context,"Error "+responseString+". Please try again.",Toast.LENGTH_LONG).show();
+                        }
                     }
 
                     @Override
-                    public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                        super.onFailure(statusCode, headers, responseString, throwable);
+                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                        if (errorResponse!= null){
+                            if(errorResponse.has("errors")){
+                                try {
+                                    Toast.makeText(context,"Error "+errorResponse.getInt("code")+", "+errorResponse.getString("message"),Toast.LENGTH_LONG).show();
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }else{
+                            Toast.makeText(context,"Can't connect with server.",Toast.LENGTH_LONG).show();
+                        }
                     }
                 });
             }
@@ -524,6 +618,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                             Tweet tweet1 = Tweet.fromJson(response);
                             list.add(0,tweet1);
                             notifyItemInserted(0);
+                            alertDialog.dismiss();
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -531,13 +626,25 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                     }
 
                     @Override
-                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                        Log.e("ReplyErr",errorResponse.toString());
+                    public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                        if(!responseString.isEmpty()){
+                            Toast.makeText(context,"Error "+responseString+". Please try again.",Toast.LENGTH_LONG).show();
+                        }
                     }
 
                     @Override
-                    public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                        Log.e("ReplyErr",responseString);
+                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                        if (errorResponse!= null){
+                            if(errorResponse.has("errors")){
+                                try {
+                                    Toast.makeText(context,"Error "+errorResponse.getInt("code")+", "+errorResponse.getString("message"),Toast.LENGTH_LONG).show();
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }else{
+                            Toast.makeText(context,"Can't connect with server.",Toast.LENGTH_LONG).show();
+                        }
                     }
                 });
             }

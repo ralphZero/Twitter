@@ -175,13 +175,25 @@ public class DetailedView extends AppCompatActivity {
                         }
 
                         @Override
-                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                            super.onFailure(statusCode, headers, throwable, errorResponse);
+                        public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                            if(!responseString.isEmpty()){
+                                Toast.makeText(DetailedView.this,"Error "+responseString+". Please try again.",Toast.LENGTH_LONG).show();
+                            }
                         }
 
                         @Override
-                        public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                            super.onFailure(statusCode, headers, responseString, throwable);
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                            if (errorResponse!= null){
+                                if(errorResponse.has("errors")){
+                                    try {
+                                        Toast.makeText(DetailedView.this,"Error "+errorResponse.getInt("code")+", "+errorResponse.getString("message"),Toast.LENGTH_LONG).show();
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }else{
+                                Toast.makeText(DetailedView.this,"Can't connect with server.",Toast.LENGTH_LONG).show();
+                            }
                         }
                     });
                 }else {
@@ -203,13 +215,25 @@ public class DetailedView extends AppCompatActivity {
                         }
 
                         @Override
-                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                            super.onFailure(statusCode, headers, throwable, errorResponse);
+                        public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                            if(!responseString.isEmpty()){
+                                Toast.makeText(DetailedView.this,"Error "+responseString+". Please try again.",Toast.LENGTH_LONG).show();
+                            }
                         }
 
                         @Override
-                        public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                            super.onFailure(statusCode, headers, responseString, throwable);
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                            if (errorResponse!= null){
+                                if(errorResponse.has("errors")){
+                                    try {
+                                        Toast.makeText(DetailedView.this,"Error "+errorResponse.getInt("code")+", "+errorResponse.getString("message"),Toast.LENGTH_LONG).show();
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }else{
+                                Toast.makeText(DetailedView.this,"Can't connect with server.",Toast.LENGTH_LONG).show();
+                            }
                         }
                     });
                 }
@@ -236,13 +260,25 @@ public class DetailedView extends AppCompatActivity {
                         }
 
                         @Override
-                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                            super.onFailure(statusCode, headers, throwable, errorResponse);
+                        public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                            if(!responseString.isEmpty()){
+                                Toast.makeText(DetailedView.this,"Error "+responseString+". Please try again.",Toast.LENGTH_LONG).show();
+                            }
                         }
 
                         @Override
-                        public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                            super.onFailure(statusCode, headers, responseString, throwable);
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                            if (errorResponse!= null){
+                                if(errorResponse.has("errors")){
+                                    try {
+                                        Toast.makeText(DetailedView.this,"Error "+errorResponse.getInt("code")+", "+errorResponse.getString("message"),Toast.LENGTH_LONG).show();
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }else{
+                                Toast.makeText(DetailedView.this,"Can't connect with server.",Toast.LENGTH_LONG).show();
+                            }
                         }
                     });
                 }else{
@@ -261,14 +297,25 @@ public class DetailedView extends AppCompatActivity {
                         }
 
                         @Override
-                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                            super.onFailure(statusCode, headers, throwable, errorResponse);
-                            Log.e("retweetErr",errorResponse.toString());
+                        public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                            if(!responseString.isEmpty()){
+                                Toast.makeText(DetailedView.this,"Error "+responseString+". Please try again.",Toast.LENGTH_LONG).show();
+                            }
                         }
 
                         @Override
-                        public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                            super.onFailure(statusCode, headers, responseString, throwable);
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                            if (errorResponse!= null){
+                                if(errorResponse.has("errors")){
+                                    try {
+                                        Toast.makeText(DetailedView.this,"Error "+errorResponse.getInt("code")+", "+errorResponse.getString("message"),Toast.LENGTH_LONG).show();
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }else{
+                                Toast.makeText(DetailedView.this,"Can't connect with server.",Toast.LENGTH_LONG).show();
+                            }
                         }
                     });
                 }
@@ -336,11 +383,11 @@ public class DetailedView extends AppCompatActivity {
     }
 
     private void ReplyToPost(final Tweet tweet, View v) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(DetailedView.this );
         final AlertDialog alertDialog = builder.create();
 
-        LayoutInflater inflater = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.reply_dialog_2,null);
+        //LayoutInflater inflater = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = getLayoutInflater().inflate(R.layout.reply_dialog_2,null);
 
         //definition des vues
         //---------------------
@@ -376,6 +423,7 @@ public class DetailedView extends AppCompatActivity {
                             hasLiked = false;
                             Tweet tweet1 = Tweet.fromJson(response);
                             mTweet = tweet1;
+                            alertDialog.dismiss();
                             //Intent
                             //list.add(0,tweet1);
                             //notifyItemInserted(0);
@@ -386,13 +434,25 @@ public class DetailedView extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                        Log.e("ReplyErr",errorResponse.toString());
+                    public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                        if(!responseString.isEmpty()){
+                            Toast.makeText(DetailedView.this,"Error "+responseString+". Please try again.",Toast.LENGTH_LONG).show();
+                        }
                     }
 
                     @Override
-                    public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                        Log.e("ReplyErr",responseString);
+                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                        if (errorResponse!= null){
+                            if(errorResponse.has("errors")){
+                                try {
+                                    Toast.makeText(DetailedView.this,"Error "+errorResponse.getInt("code")+", "+errorResponse.getString("message"),Toast.LENGTH_LONG).show();
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }else{
+                            Toast.makeText(DetailedView.this,"Can't connect with server.",Toast.LENGTH_LONG).show();
+                        }
                     }
                 });
             }
@@ -405,8 +465,6 @@ public class DetailedView extends AppCompatActivity {
                 alertDialog.dismiss();
             }
         });
-        //ProgressBar progressBar = view.findViewById(R.id.progressBar4);
-        //progressBar.setVisibility(View.INVISIBLE);
         //fin definition
 
         alertDialog.setView(view);

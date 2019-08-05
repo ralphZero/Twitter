@@ -116,6 +116,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_toRightOf="@id/textView8"
+                        android:ellipsize="end"
+                        android:maxLines="1"
                         android:textColor="@color/TwitterBlue"
                         android:textSize="18sp"
                         tools:text="Twitter for IPhone" />
