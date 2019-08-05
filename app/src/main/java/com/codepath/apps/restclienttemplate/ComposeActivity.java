@@ -1,11 +1,15 @@
 package com.codepath.apps.restclienttemplate;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -59,6 +63,9 @@ public class ComposeActivity extends AppCompatActivity {
         layout.setCounterMaxLength(MAX_TWEET_LIMIT);
 
         etCompose = (EditText) findViewById(R.id.etCompose);
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        String draft = pref.getString("draft", "");
+        layout.getEditText().setText(draft);
         etCompose.requestFocus();
 
         btnCompose = (Button) findViewById(R.id.btnCompose);
@@ -160,9 +167,53 @@ public class ComposeActivity extends AppCompatActivity {
         });
     }
 
+    public void onLeavingThisActivity(){
+        //first we check if the edittext has text on it
+        //if yes we prompt an alert to ask if we can save the text
+        //if no we return nothing
+        final String tweetContent = layout.getEditText().getText().toString();
+        if(!tweetContent.contentEquals("")){
+            AlertDialog.Builder builder = new AlertDialog.Builder(ComposeActivity.this);
+            builder.setTitle("Save draft");
+            builder.setMessage("Do you want to save this tweet as draft ?");
+            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    //we save to SharedPreference and finish activity
+                    SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ComposeActivity.this);
+                    SharedPreferences.Editor edit = pref.edit();
+                    edit.putString("draft", tweetContent);
+                    edit.commit();
+                    dialog.dismiss();
+                    finish();
+                }
+            });
+            builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    //we cancel the dialog and finish activity
+                    SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(ComposeActivity.this);
+                    SharedPreferences.Editor edit = pref.edit();
+                    edit.putString("draft", "");
+                    edit.commit();
+                    dialog.dismiss();
+                    finish();
+                }
+            });
+            builder.show();
+        }else
+            finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        onLeavingThisActivity();
+    }
+
     @Override
     public boolean onSupportNavigateUp() {
-        finish();
+        onLeavingThisActivity();
         return true;
     }
 }
